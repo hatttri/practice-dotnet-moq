@@ -11,7 +11,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddDbContext<SampleDb>(options => options.UseSqlite("Data Source=sample.sqlite"));
+builder.Services.AddDbContext<SampleDb>(options => options.UseSqlite("Data Source=Sqlite/sample.sqlite"));
 
 var app = builder.Build();
 

@@ -399,5 +399,5 @@ FodyWeavers.xsd
 # JetBrains Rider
 *.sln.iml
 
-# �ʐݒ�
-*.sqlite
+# 個別設定
+Sqlite
