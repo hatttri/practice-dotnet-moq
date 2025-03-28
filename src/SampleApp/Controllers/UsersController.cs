@@ -1,32 +1,20 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 
-using SampleApp.DbContexts;
 using SampleApp.DbModels;
+using SampleApp.DbServices;
 
 namespace SampleApp.Controllers;
 
-[Route("api/[controller]")]
 [ApiController]
-public class UsersController : ControllerBase
+[Route("api/[controller]")]
+public class UsersController(
+    UsersService usersService
+) : ControllerBase
 {
-    private readonly SampleDb _sampleDb;
-
-    public UsersController(SampleDb sampleDb)
-    {
-        _sampleDb = sampleDb;
-    }
-
-    [HttpGet]
-    public ActionResult<IEnumerable<User>> GetUsers()
-    {
-        var users = _sampleDb.Users;
-        return Ok(users);
-    }
-
     [HttpGet("{id}")]
-    public ActionResult<User> GetUser([FromRoute] Guid id)
+    public async Task<ActionResult<User>> GetUserAsync([FromRoute] Guid id)
     {
-        var user = _sampleDb.Users.Where(u => u.Id == id).FirstOrDefault();
+        User? user = await usersService.SelectUserAsync(id);
         if (user is null)
         {
             return NotFound();
@@ -35,18 +23,17 @@ public class UsersController : ControllerBase
         return Ok(user);
     }
 
-    [HttpPost]
-    public ActionResult<User> PostUser([FromBody] string name)
+    [HttpGet]
+    public async Task<ActionResult<IEnumerable<User>>> GetUsersAsync()
     {
-        var user = new User
-        {
-            Id = Guid.NewGuid(),
-            Name = name
-        };
+        IEnumerable<User> users = await usersService.SelectUsersAsync();
+        return Ok(users);
+    }
 
-        _sampleDb.Users.Add(user);
-        _sampleDb.SaveChanges();
-
+    [HttpPost]
+    public async Task<ActionResult<User>> PostUserAsync([FromBody] string name)
+    {
+        User user = await usersService.InsertUserAsync(name);
         return Ok(user);
     }
 }

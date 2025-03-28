@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 
 using SampleApp.DbContexts;
+using SampleApp.DbServices;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,6 +13,8 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddDbContext<SampleDb>(options => options.UseSqlite("Data Source=Sqlite/sample.sqlite"));
+builder.Services.AddScoped<UsersService>();
+
 
 var app = builder.Build();
 
