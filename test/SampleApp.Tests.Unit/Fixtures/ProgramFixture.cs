@@ -1,4 +1,8 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+
+using SampleApp.DbContexts;
+using SampleApp.DbServices;
 
 namespace SampleApp.Tests.Unit.Fixtures;
 
@@ -11,6 +15,19 @@ public class ProgramFixture : IDisposable
     public ProgramFixture()
     {
         var services = new ServiceCollection();
+
+        services.AddTransient<SampleDb>(_ =>
+        {
+            var contextOptions = new DbContextOptionsBuilder<SampleDb>().UseSqlite("Data Source=:memory:").Options;
+            var context = new SampleDb(contextOptions);
+
+            context.Database.OpenConnection();
+            context.Database.EnsureCreated();
+
+            return context;
+        });
+        services.AddTransient<UsersService>();
+
         Services = services.BuildServiceProvider();
     }
 
